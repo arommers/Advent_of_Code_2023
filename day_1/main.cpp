@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <cctype>
-#include <unordered_map>
 
 //  Part 1
 
@@ -130,89 +130,53 @@
 //     return (sum);
 // }
 
-// int main(int argc, char **argv)
-// {
-//     std::string fileName;
-//     int sum = 0;
+std::vector<std::string> spelled = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
 
-//     if (argc != 2)
-//         std::cerr << "ERROR. Please provide: <./a.out> <fileName>" << std::endl;
-//     fileName = argv[1];
-//     sum = readFile(fileName, sum);
-//     std::cout << "Sum: " << sum << std::endl;
-//     return (0);
-// }
-
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <unordered_map>
-
-// Function to convert word representations of numbers to numerical values
-int wordToNumber(const std::string& word) {
-    // Create a mapping of word representations to numerical values
-    std::unordered_map<std::string, int> wordToNumMap = {
-        {"one", 1},
-        {"two", 2},
-        {"three", 3},
-        {"four", 4},
-        {"five", 5},
-        {"six", 6},
-        {"seven", 7},
-        {"eight", 8},
-        {"nine", 9}
-    };
-
-    // Try to find the word in the map
-    auto it = wordToNumMap.find(word);
-    if (it != wordToNumMap.end()) {
-        // If found, return the corresponding numerical value
-        return it->second;
-    } else {
-        // If not found, try to convert it to a number
-        try {
-            return std::stoi(word);
-        } catch (const std::invalid_argument&) {
-            // Conversion failed, return 0 or handle it as needed
-            return 0;
-        }
+static int  getNumber(const std::string& line, int i)
+{
+    if (isdigit(line[i]))
+        return (line[i] - '0');
+    for (int j = 0; j < spelled.size(); j++)
+    {
+        const auto& numbers = spelled[j];
+        if (i + numbers.size() > line.size())
+            continue;
+        if (line.substr(i, numbers.size()) == numbers)
+            return(j);
     }
+    return (-1);
 }
 
-// Function to calculate the sum of calibration values
-int calculateSum(const std::string& fileName) {
-    std::ifstream inFile(fileName);
-    if (!inFile) {
-        std::cerr << "Error opening file: " << fileName << std::endl;
-        return 0;
-    }
-
-    int sum = 0;
+int main(int argc, char **argv)
+{
+    std::string fileIn;
     std::string line;
-    while (std::getline(inFile, line)) {
-        // Find the first and last digits in the line
-        size_t firstDigitPos = line.find_first_of("123456789");
-        size_t lastDigitPos = line.find_last_of("123456789");
+    int         num1;
+    int         num2;
+    int         digit;
+    int         sum = 0;
 
-        // Extract the substring containing the digits
-        std::string digitsSubstring = line.substr(firstDigitPos, lastDigitPos - firstDigitPos + 1);
-
-        // Convert the substring to the numerical value
-        int numericalValue = wordToNumber(digitsSubstring);
-
-        // Add the numerical value to the sum
-        sum += numericalValue;
+    fileIn = argv[1];
+    std::ifstream inFile(fileIn);
+    while (getline(inFile, line))
+    {
+        num1 = -1;
+        num2 = -1;
+        for(int i = 0; i < line.size(); i++)
+        {
+            digit = getNumber(line, i);
+            if (digit == -1)
+                continue;
+            if (num1 == -1)
+                num1 = digit;
+            else
+                num2 = digit;
+        }
+        if (num2 == -1)
+            num2 = num1;
+        sum += 10 * num1 + num2;
     }
-
-    inFile.close();
-    return sum;
+    std::cout << "Sum: " << sum << std::endl;
+    return (0);
 }
 
-int main() {
-    std::string fileName = "./test";
-    int sum = calculateSum(fileName);
-
-    std::cout << "Sum of calibration values: " << sum << std::endl;
-
-    return 0;
-}
