@@ -6,6 +6,18 @@
 
 bool    check_sides(std::vector<std::string>& engine, size_t y, size_t x)
 {
+    if (y > 0 && engine[y - 1][x] != '.' && !isdigit(engine[y - 1][x]))                         // check above number
+        return (true);
+    else if (y < engine.size() - 1 && engine[y + 1][x] != '.' && !isdigit(engine[y + 1][x]))    // check below number
+        return (true);
+    else if (x > 0 && engine[y][x - 1] != '.' && !isdigit(engine[y][x - 1]))                    // check left of number
+        return (true);
+    else if (x < engine[y].size() - 1 && engine[y][x + 1] != '.' && !isdigit(engine[y][x + 1])) // check right of numer
+        return (true);
+    else if (y > 0 && x > 0 && engine[y - 1][x - 1] != '.' && !isdigit(engine[y - 1][x - 1]))   // check up and left of number
+        return (true);
+
+    
     return (false);
 }
 
